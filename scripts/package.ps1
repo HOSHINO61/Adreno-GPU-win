@@ -20,7 +20,10 @@ Copy-Item package\freedreno_icd.aarch64.json $drv
 # ---- INF
 $inf = Get-Content package\virtio_wddm_rs.inx -Raw
 $inf = $inf.Replace('%%BUILDDATE%%', (Get-Date).ToUniversalTime().ToString('MM/dd/yyyy'))
-$inf = $inf.Replace('%%VERSION%%', "20.15.1.$run")
+# Local fork: start above the upstream build numbering (upstream build-43 is
+# 20.15.1.43) so a fresh fork build still wins the PnP driver ranking when an
+# older upstream package is already staged on the machine.
+$inf = $inf.Replace('%%VERSION%%', "20.15.1.$([int]$run + 1000)")
 foreach ($extra in Get-ChildItem bin -Directory -Filter 'bin-*' | Where-Object Name -ne 'bin-arm64') {
     # Optional ARM64EC / x86 user-mode drivers (later stages).
     $hook = Join-Path package "$($extra.Name).ps1"
